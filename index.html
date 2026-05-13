@@ -1,278 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VAULT PRO</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Vault Simple</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial;
-}
-
 body{
-background:#050816;
+margin:0;
+font-family:Arial;
+background:#0b1020;
 color:white;
 display:flex;
 justify-content:center;
 align-items:center;
-min-height:100vh;
-overflow:hidden;
+height:100vh;
 }
 
-/* GLOW BACKGROUND */
-body::before{
-content:"";
-position:fixed;
-width:400px;
-height:400px;
-background:radial-gradient(circle,#00ffd5,transparent);
-filter:blur(120px);
-top:-100px;
-left:-100px;
-animation:move1 6s infinite alternate;
-}
-
-body::after{
-content:"";
-position:fixed;
-width:400px;
-height:400px;
-background:radial-gradient(circle,#7c3aed,transparent);
-filter:blur(120px);
-bottom:-100px;
-right:-100px;
-animation:move2 7s infinite alternate;
-}
-
-@keyframes move1{
-from{transform:translate(0,0);}
-to{transform:translate(80px,60px);}
-}
-
-@keyframes move2{
-from{transform:translate(0,0);}
-to{transform:translate(-80px,-60px);}
-}
-
-/* FLOATING PARTICLES */
-.p{
-position:fixed;
-width:4px;
-height:4px;
-background:#00ffd5;
-border-radius:50%;
-animation:float linear infinite;
-opacity:0.7;
-}
-
-@keyframes float{
-from{transform:translateY(100vh);}
-to{transform:translateY(-10vh);}
-}
-
-/* BOX */
 .box{
-width:92%;
-max-width:380px;
-background:rgba(255,255,255,0.06);
-backdrop-filter:blur(18px);
-border-radius:18px;
+width:300px;
+background:#111a2e;
 padding:20px;
-border:1px solid rgba(255,255,255,0.1);
-z-index:2;
-}
-
-h1{
+border-radius:15px;
 text-align:center;
-color:#00ffd5;
-margin-bottom:10px;
 }
 
-input{
+input,button{
 width:100%;
-padding:12px;
+padding:10px;
 margin:8px 0;
 border:none;
-border-radius:10px;
-background:#111a2e;
-color:white;
+border-radius:8px;
 }
 
 button{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:none;
-border-radius:10px;
 background:#00ffd5;
 font-weight:bold;
 cursor:pointer;
-transition:0.3s;
 }
 
-button:hover{
-transform:scale(1.05);
-}
-
-.hidden{display:none;}
-
-.balance{
-text-align:center;
-font-size:40px;
-margin:15px 0;
-color:#00ffd5;
-}
-
-canvas{
-background:white;
-border-radius:10px;
-padding:10px;
-}
+h1{color:#00ffd5;}
 </style>
 </head>
 
 <body>
 
-<script>
-for(let i=0;i<50;i++){
-let d=document.createElement("div");
-d.className="p";
-d.style.left=Math.random()*100+"vw";
-d.style.animationDuration=(3+Math.random()*5)+"s";
-d.style.width=d.style.height=(2+Math.random()*4)+"px";
-document.body.appendChild(d);
-}
-</script>
+<div class="box">
 
-<!-- LOGIN -->
-<div class="box" id="login">
-<h1>LOGIN</h1>
-<input id="u" placeholder="username">
-<input id="p" type="password" placeholder="password">
-<button onclick="login()">ENTER</button>
-</div>
+<h1>💰 BALANCE</h1>
 
-<!-- APP -->
-<div class="box hidden" id="app">
-<h1>💰 VAULT</h1>
+<h2>₹<span id="bal">0</span></h2>
 
-<div class="balance">₹<span id="bal">0</span></div>
+<input id="amt" type="number" placeholder="Add amount">
 
-<input id="amt" type="number" placeholder="amount">
-
-<button onclick="add()">ADD</button>
-<button onclick="rem()">REMOVE</button>
+<button onclick="add()">ADD BALANCE</button>
 <button onclick="reset()">RESET</button>
 
-<canvas id="c"></canvas>
-
 </div>
 
 <script>
 
-let user="";
-let chart;
+let balValue = 0;
 
-/* LOGIN */
-function login(){
-user=u.value;
-let pass=p.value;
-
-if(!user||!pass)return;
-
-let sp=localStorage.getItem(user+"_p");
-
-if(sp && sp!==pass){
-alert("Wrong password");
-return;
-}
-
-if(!sp){
-localStorage.setItem(user+"_p",pass);
-localStorage.setItem(user+"_m",0);
-}
-
-localStorage.setItem("lu",user);
-
-start();
-}
-
-/* START */
-function start(){
-user=localStorage.getItem("lu");
-
-login.style.display="none";
-app.classList.remove("hidden");
-
-update();
-draw();
-}
-
-/* BALANCE */
-function update(){
-bal.innerText=localStorage.getItem(user+"_m")||0;
+/* LOAD SAVED */
+if(localStorage.getItem("balance")){
+balValue = +localStorage.getItem("balance");
+document.getElementById("bal").innerText = balValue;
 }
 
 /* ADD */
 function add(){
-let a=+amt.value;
-let m=+localStorage.getItem(user+"_m")||0;
+let a = +amt.value;
 
-m+=a;
+if(!a || a<=0) return;
 
-localStorage.setItem(user+"_m",m);
+balValue += a;
 
-update();
-draw();
-}
+localStorage.setItem("balance", balValue);
 
-/* REMOVE */
-function rem(){
-let a=+amt.value;
-let m=+localStorage.getItem(user+"_m")||0;
+document.getElementById("bal").innerText = balValue;
 
-m-=a;if(m<0)m=0;
-
-localStorage.setItem(user+"_m",m);
-
-update();
-draw();
+amt.value="";
 }
 
 /* RESET */
 function reset(){
-localStorage.setItem(user+"_m",0);
-update();
-draw();
+balValue = 0;
+localStorage.setItem("balance", 0);
+document.getElementById("bal").innerText = 0;
 }
-
-/* CHART */
-function draw(){
-
-if(!chart){
-chart=new Chart(c,{
-type:"line",
-data:{
-labels:["Now"],
-datasets:[{
-data:[+localStorage.getItem(user+"_m")||0],
-borderWidth:3
-}]
-}
-});
-}else{
-chart.data.datasets[0].data=[+localStorage.getItem(user+"_m")||0];
-chart.update();
-}
-}
-
-start();
 
 </script>
 
