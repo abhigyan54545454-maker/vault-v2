@@ -313,6 +313,11 @@ Secure neon finance system 🔒
 </div>
 
 </div>
+localStorage.setItem("loggedUser", username);
+currentUser = username;
+
+document.getElementById("loginPage").style.display = "none";
+document.getElementById("vaultPage").style.display = "block";
 <!-- VAULT PAGE -->
 
 <div class="container" id="vaultPage">
@@ -438,6 +443,30 @@ LOGOUT
 </div>
 
 <script>
+window.onload = function(){
+
+let user = localStorage.getItem("loggedUser");
+
+if(user){
+currentUser = user;
+document.getElementById("loginPage").style.display = "none";
+document.getElementById("vaultPage").style.display = "block";
+
+updateBalance();
+loadHistory();
+createMoneyChart();
+createCryptoChart();
+loadLeaderboard();
+loadReviews();
+
+}else{
+
+document.getElementById("loginPage").style.display = "block";
+document.getElementById("vaultPage").style.display = "none";
+
+}
+
+};
 
 let currentUser = "";
 let moneyChart;
@@ -479,7 +508,6 @@ localStorage.setItem("all_users", JSON.stringify(users));
 localStorage.setItem("loggedUser", username);
 currentUser = username;
 
-showVault();
 }
 
 /* ---------------- SHOW VAULT ---------------- */
