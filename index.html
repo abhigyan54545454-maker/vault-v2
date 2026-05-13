@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ABHIGYAN MONEY VAULT</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#060b16;
+overflow-x:hidden;
+color:white;
+min-height:100vh;
+position:relative;
+}
+
+/* PARTICLES */
+
+.particle{
+position:fixed;
+width:4px;
+height:4px;
+background:#00ffd5;
+border-radius:50%;
+pointer-events:none;
+animation:float linear infinite;
+opacity:0.8;
+}
+
+@keyframes float{
+from{
+transform:translateY(100vh);
+}
+to{
+transform:translateY(-10vh);
+}
+}
+
+/* BACKGROUND GLOW */
+
+.bg1{
+position:fixed;
+width:300px;
+height:300px;
+background:#00ffd544;
+filter:blur(100px);
+border-radius:50%;
+top:-50px;
+left:-50px;
+z-index:-1;
+animation:move1 8s infinite alternate;
+}
+
+.bg2{
+position:fixed;
+width:350px;
+height:350px;
+background:#7c3aed55;
+filter:blur(120px);
+border-radius:50%;
+bottom:-100px;
+right:-100px;
+z-index:-1;
+animation:move2 10s infinite alternate;
+}
+
+@keyframes move1{
+0%{
+transform:translate(0,0);
+}
+100%{
+transform:translate(50px,50px);
+}
+}
+
+@keyframes move2{
+0%{
+transform:translate(0,0);
+}
+100%{
+transform:translate(-50px,-30px);
+}
+}
+
+/* CONTAINER */
+
+.container{
+width:92%;
+max-width:430px;
+margin:30px auto;
+background:rgba(255,255,255,0.06);
+backdrop-filter:blur(18px);
+padding:25px;
+border-radius:25px;
+border:1px solid rgba(255,255,255,0.08);
+box-shadow:0 0 25px rgba(0,255,213,0.12);
+}
+
+/* HEADINGS */
+
+h1{
+text-align:center;
+font-size:30px;
+color:#00ffd5;
+margin-bottom:6px;
+}
+
+.owner{
+text-align:center;
+opacity:0.7;
+font-size:14px;
+margin-bottom:20px;
+}
+
+/* INPUTS */
+
+input,textarea{
+width:100%;
+padding:14px;
+margin-top:12px;
+border:none;
+outline:none;
+border-radius:14px;
+background:#101827;
+color:white;
+font-size:15px;
+}
+
+/* BUTTONS */
+
+button{
+width:100%;
+padding:14px;
+margin-top:14px;
+border:none;
+border-radius:14px;
+background:#00ffd5;
+color:black;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.02);
+}
+
+.red{
+background:#ff4d4d;
+color:white;
+}
+
+.blue{
+background:#3b82f6;
+color:white;
+}
+
+.purple{
+background:#9333ea;
+color:white;
+}
+
+/* BALANCE BOX */
+
+.balance-box{
+background:#0f172a;
+padding:22px;
+border-radius:20px;
+text-align:center;
+margin-top:20px;
+}
+
+.balance-box p{
+opacity:0.7;
+}
+
+.balance{
+font-size:45px;
+margin-top:10px;
+color:#00ffd5;
+font-weight:bold;
+}
+
+/* SECTION */
+
+.section{
+margin-top:28px;
+}
+
+.section h2{
+margin-bottom:12px;
+color:#00ffd5;
+font-size:22px;
+}
+
+/* HISTORY */
+
+.history{
+max-height:200px;
+overflow-y:auto;
+}
+
+.history-item{
+background:#111827;
+padding:12px;
+border-radius:12px;
+margin-bottom:10px;
+display:flex;
+justify-content:space-between;
+font-size:14px;
+}
+
+/* LEADERBOARD */
+
+.leaderboard-item{
+background:#101827;
+padding:14px;
+border-radius:14px;
+margin-bottom:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-left:4px solid #00ffd5;
+}
+
+.rank{
+font-weight:bold;
+font-size:18px;
+color:#00ffd5;
+}
+
+/* REVIEWS */
+
+.review{
+background:#101827;
+padding:14px;
+border-radius:14px;
+margin-bottom:12px;
+}
+
+.review-name{
+font-weight:bold;
+color:#00ffd5;
+margin-bottom:6px;
+}
+
+.review-stars{
+margin-top:8px;
+color:gold;
+}
+
+/* CANVAS */
+
+canvas{
+background:white;
+padding:10px;
+border-radius:18px;
+}
+
+/* LOGIN PAGE */
+
+#vaultPage{
+display:none;
+}
+
+.small{
+text-align:center;
+margin-top:12px;
+opacity:0.7;
+font-size:13px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg1"></div>
+<div class="bg2"></div>
+
+<!-- LOGIN PAGE -->
+
+<div class="container" id="loginPage">
+
+<h1>💸 MONEY VAULT</h1>
+
+<div class="owner">
+ABHIGYAN TRIPATHI ⚡
+</div>
+
+<input type="text" id="username" placeholder="Username">
+
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="login()">
+ENTER VAULT
+</button>
+
+<div class="small">
+Secure neon finance system 🔒
+</div>
+
+</div>
+<!-- VAULT PAGE -->
+
+<div class="container" id="vaultPage">
+
+<h1>💰 YOUR VAULT</h1>
+
+<div class="owner">
+Welcome, ABHIGYAN TRIPATHI 🚀
+</div>
+
+<!-- BALANCE -->
+
+<div class="balance-box">
+
+<p>Total Balance</p>
+
+<div class="balance" id="balance">
+₹0
+</div>
+
+</div>
+
+<!-- MONEY INPUT -->
+
+<input 
+type="number" 
+id="moneyInput" 
+placeholder="Enter Amount">
+
+<button onclick="addMoney()">
++ ADD MONEY
+</button>
+
+<button class="red" onclick="removeMoney()">
+- REMOVE MONEY
+</button>
+
+<button class="blue" onclick="resetVault()">
+RESET VAULT
+</button>
+
+<!-- HISTORY -->
+
+<div class="section">
+
+<h2>📜 Transaction History</h2>
+
+<div class="history" id="historyBox">
+
+</div>
+
+</div>
+
+<!-- MONEY CHART -->
+
+<div class="section">
+
+<h2>📊 Vault Analytics</h2>
+
+<canvas id="moneyChart"></canvas>
+
+</div>
+
+<!-- LTC CHART -->
+
+<div class="section">
+
+<h2>🪙 LIVE LTC CHART</h2>
+
+<canvas id="cryptoChart"></canvas>
+
+</div>
+
+<!-- LEADERBOARD -->
+
+<div class="section">
+
+<h2>🏆 TOP 100 RICHEST USERS</h2>
+
+<div id="leaderboard">
+
+</div>
+
+</div>
+
+<!-- REVIEW SYSTEM -->
+
+<div class="section">
+
+<h2>⭐ Reviews</h2>
+
+<input 
+type="text" 
+id="reviewName" 
+placeholder="Your Name">
+
+<textarea 
+id="reviewText" 
+placeholder="Write Review">
+</textarea>
+
+<input 
+type="number" 
+id="reviewStars" 
+placeholder="Stars (1-5)"
+min="1"
+max="5">
+
+<button class="purple" onclick="addReview()">
+POST REVIEW
+</button>
+
+<div id="reviewsContainer">
+
+</div>
+
+</div>
+
+<button class="red" onclick="logout()">
+LOGOUT
+</button>
+
+</div>
+
+<script>
+
+let currentUser = "";
+let moneyChart;
+let cryptoChart;
+
+/* ---------------- LOGIN ---------------- */
+
+function login(){
+
+let username = document.getElementById("username").value;
+let password = document.getElementById("password").value;
+
+if(username === "" || password === ""){
+alert("Fill all fields");
+return;
+}
+
+let savedPassword = localStorage.getItem(username+"_pass");
+
+if(savedPassword && savedPassword !== password){
+alert("Wrong password");
+return;
+}
+
+if(!savedPassword){
+localStorage.setItem(username+"_pass", password);
+localStorage.setItem(username+"_money", 0);
+localStorage.setItem(username+"_history", JSON.stringify([]));
+}
+
+/* save user list for leaderboard */
+let users = JSON.parse(localStorage.getItem("all_users")) || [];
+
+if(!users.includes(username)){
+users.push(username);
+localStorage.setItem("all_users", JSON.stringify(users));
+}
+
+localStorage.setItem("loggedUser", username);
+currentUser = username;
+
+showVault();
+}
+
+/* ---------------- SHOW VAULT ---------------- */
+
+function showVault(){
+
+let user = localStorage.getItem("loggedUser");
+if(!user) return;
+
+currentUser = user;
+
+document.getElementById("loginPage").style.display = "none";
+document.getElementById("vaultPage").style.display = "block";
+
+updateBalance();
+loadHistory();
+createMoneyChart();
+createCryptoChart();
+loadLeaderboard();
+loadReviews();
+}
+
+/* ---------------- BALANCE ---------------- */
+
+function updateBalance(){
+
+let money = localStorage.getItem(currentUser+"_money") || 0;
+document.getElementById("balance").innerText = "₹" + money;
+
+}
+
+/* ---------------- ADD MONEY ---------------- */
+
+function addMoney(){
+
+let amount = parseInt(document.getElementById("moneyInput").value);
+
+if(isNaN(amount) || amount <= 0){
+alert("Enter valid amount");
+return;
+}
+
+let money = parseInt(localStorage.getItem(currentUser+"_money")) || 0;
+money += amount;
+
+localStorage.setItem(currentUser+"_money", money);
+
+saveHistory("Added ₹" + amount);
+
+updateBalance();
+loadHistory();
+updateMoneyChart();
+loadLeaderboard();
+
+document.getElementById("moneyInput").value = "";
+}
+
+/* ---------------- REMOVE MONEY ---------------- */
+
+function removeMoney(){
+
+let amount = parseInt(document.getElementById("moneyInput").value);
+
+if(isNaN(amount) || amount <= 0){
+alert("Enter valid amount");
+return;
+}
+
+let money = parseInt(localStorage.getItem(currentUser+"_money")) || 0;
+money -= amount;
+
+if(money < 0) money = 0;
+
+localStorage.setItem(currentUser+"_money", money);
+
+saveHistory("Removed ₹" + amount);
+
+updateBalance();
+loadHistory();
+updateMoneyChart();
+loadLeaderboard();
+
+document.getElementById("moneyInput").value = "";
+}
+
+/* ---------------- HISTORY ---------------- */
+
+function saveHistory(text){
+
+let history = JSON.parse(localStorage.getItem(currentUser+"_history")) || [];
+
+history.unshift({
+text:text,
+time:new Date().toLocaleString()
+});
+
+localStorage.setItem(currentUser+"_history", JSON.stringify(history));
+}
+
+function loadHistory(){
+
+let history = JSON.parse(localStorage.getItem(currentUser+"_history")) || [];
+
+let box = document.getElementById("historyBox");
+box.innerHTML = "";
+
+history.forEach(h=>{
+
+let div = document.createElement("div");
+div.className = "history-item";
+
+div.innerHTML = `
+<span>${h.text}</span>
+<span>${h.time}</span>
+`;
+
+box.appendChild(div);
+
+});
+
+}
+
+/* ---------------- RESET ---------------- */
+
+function resetVault(){
+
+localStorage.setItem(currentUser+"_money", 0);
+localStorage.setItem(currentUser+"_history", JSON.stringify([]));
+
+updateBalance();
+loadHistory();
+updateMoneyChart();
+loadLeaderboard();
+}
+
+/* ---------------- LEADERBOARD (TOP 100) ---------------- */
+
+function loadLeaderboard(){
+
+let box = document.getElementById("leaderboard");
+box.innerHTML = "";
+
+let users = JSON.parse(localStorage.getItem("all_users")) || [];
+
+let data = users.map(name=>{
+return {
+name:name,
+money: parseInt(localStorage.getItem(name+"_money")) || 0
+};
+});
+
+data.sort((a,b)=>b.money-a.money);
+
+data.slice(0,100).forEach((u,i)=>{
+
+let div = document.createElement("div");
+div.className = "leaderboard-item";
+
+div.innerHTML = `
+<div>
+<div class="rank">#${i+1}</div>
+<div>${u.name}</div>
+</div>
+<div>₹${u.money}</div>
+`;
+
+box.appendChild(div);
+
+});
+
+}
+
+/* ---------------- REVIEWS ---------------- */
+
+function addReview(){
+
+let name = document.getElementById("reviewName").value;
+let text = document.getElementById("reviewText").value;
+let stars = document.getElementById("reviewStars").value;
+
+if(!name || !text || !stars){
+alert("Fill review");
+return;
+}
+
+let reviews = JSON.parse(localStorage.getItem("vault_reviews")) || [];
+
+reviews.unshift({
+name:name,
+text:text,
+stars:stars
+});
+
+localStorage.setItem("vault_reviews", JSON.stringify(reviews));
+
+loadReviews();
+}
+
+function loadReviews(){
+
+let reviews = JSON.parse(localStorage.getItem("vault_reviews")) || [];
+
+let box = document.getElementById("reviewsContainer");
+box.innerHTML = "";
+
+reviews.forEach(r=>{
+
+let stars = "⭐".repeat(r.stars);
+
+let div = document.createElement("div");
+div.className = "review";
+
+div.innerHTML = `
+<div class="review-name">${r.name}</div>
+<div>${r.text}</div>
+<div class="review-stars">${stars}</div>
+`;
+
+box.appendChild(div);
+
+});
+
+}
+
+/* ---------------- MONEY CHART ---------------- */
+
+function createMoneyChart(){
+
+let ctx = document.getElementById("moneyChart");
+
+moneyChart = new Chart(ctx,{
+type:"line",
+data:{
+labels:["Start","Now"],
+datasets:[{
+label:"Vault",
+data:[0, parseInt(localStorage.getItem(currentUser+"_money")) || 0],
+borderWidth:3
+}]
+}
+});
+
+}
+
+function updateMoneyChart(){
+
+moneyChart.data.datasets[0].data = [
+0,
+parseInt(localStorage.getItem(currentUser+"_money")) || 0
+];
+
+moneyChart.update();
+}
+
+/* ---------------- LTC LIVE CHART ---------------- */
+
+function createCryptoChart(){
+
+let ctx = document.getElementById("cryptoChart");
+
+cryptoChart = new Chart(ctx,{
+type:"line",
+data:{
+labels:["1","2","3","4","5","6","7"],
+datasets:[{
+label:"LTC Live",
+data:[80,82,85,88,87,90,92],
+borderWidth:3
+}]
+}
+});
+
+/* LIVE UPDATE */
+setInterval(()=>{
+
+let data = cryptoChart.data.datasets[0].data;
+
+data.shift();
+
+let last = data[data.length-1];
+let next = last + (Math.random()*6 - 3);
+
+if(next < 50) next = 50;
+
+data.push(parseFloat(next.toFixed(2)));
+
+cryptoChart.update();
+
+},3000);
+
+}
+
+/* ---------------- AUTO LOGIN ---------------- */
+
+showVault();
+
+/* GLOBAL VARIABLES */
+
+let currentUser = "";
+
+let moneyChart;
+
+let cryptoChart;
+
+/* PARTICLES */
+
+for(let i=0;i<80;i++){
+
+let particle = document.createElement("div");
+
+particle.classList.add("particle");
+
+particle.style.left = Math.random()*100 + "vw";
+
+particle.style.animationDuration =
+(4 + Math.random()*6) + "s";
+
+particle.style.opacity =
+Math.random();
+
+particle.style.width =
+(2 + Math.random()*5) + "px";
+
+particle.style.height =
+particle.style.width;
+
+document.body.appendChild(particle);
+
+}
+
+/* LOGIN SYSTEM */
+
+function login(){
+
+let username =
+document.getElementById("username").value;
+
+let password =
+document.getElementById("password").value;
+
+if(username === "" || password === ""){
+
+alert("Fill all fields");
+
+return;
+
+}
+
+let savedPassword =
+localStorage.getItem(username+"_pass");
+
+if(savedPassword && savedPassword !== password){
+
+alert("Wrong Password");
+
+return;
+
+}
+
+if(!savedPassword){
+
+localStorage.setItem(username+"_pass",password);
+
+localStorage.setItem(username+"_money",0);
+
+localStorage.setItem(
+username+"_history",
+JSON.stringify([])
+);
+
+}
+
+localStorage.setItem(
+"loggedUser",
+username
+);
+
+currentUser = username;
+
+showVault();
+
+}
+
+/* SHOW VAULT */
+
+function showVault(){
+
+let user =
+localStorage.getItem("loggedUser");
+
+if(!user) return;
+
+currentUser = user;
+
+document.getElementById(
+"loginPage"
+).style.display = "none";
+
+document.getElementById(
+"vaultPage"
+).style.display = "block";
+
+updateBalance();
+
+loadHistory();
+
+createMoneyChart();
+
+createCryptoChart();
+
+loadLeaderboard();
+
+loadReviews();
+
+}
+/* UPDATE BALANCE */
+
+function updateBalance(){
+
+let money =
+localStorage.getItem(
+currentUser+"_money"
+) || 0;
+
+document.getElementById(
+"balance"
+).innerText = "₹" + money;
+
+}
+
+/* ADD MONEY */
+
+function addMoney(){
+
+let amount =
+parseInt(
+document.getElementById(
+"moneyInput"
+).value
+);
+
+if(isNaN(amount) || amount <= 0){
+
+alert("Enter valid amount");
+
+return;
+
+}
+
+let currentMoney =
+parseInt(
+localStorage.getItem(
+currentUser+"_money"
+)
+) || 0;
+
+currentMoney += amount;
+
+localStorage.setItem(
+currentUser+"_money",
+currentMoney
+);
+
+saveHistory(
+"Added ₹" + amount
+);
+
+updateBalance();
+
+loadHistory();
+
+updateMoneyChart();
+
+loadLeaderboard();
+
+document.getElementById(
+"moneyInput"
+).value = "";
+
+}
+
+/* REMOVE MONEY */
+
+function removeMoney(){
+
+let amount =
+parseInt(
+document.getElementById(
+"moneyInput"
+).value
+);
+
+if(isNaN(amount) || amount <= 0){
+
+alert("Enter valid amount");
+
+return;
+
+}
+
+let currentMoney =
+parseInt(
+localStorage.getItem(
+currentUser+"_money"
+)
+) || 0;
+
+currentMoney -= amount;
+
+if(currentMoney < 0){
+
+currentMoney = 0;
+
+}
+
+localStorage.setItem(
+currentUser+"_money",
+currentMoney
+);
+
+saveHistory(
+"Removed ₹" + amount
+);
+
+updateBalance();
+
+loadHistory();
+
+updateMoneyChart();
+
+loadLeaderboard();
+
+document.getElementById(
+"moneyInput"
+).value = "";
+
+}
+
+/* RESET VAULT */
+
+function resetVault(){
+
+let confirmReset =
+confirm(
+"Reset all money?"
+);
+
+if(!confirmReset) return;
+
+localStorage.setItem(
+currentUser+"_money",
+0
+);
+
+localStorage.setItem(
+currentUser+"_history",
+JSON.stringify([])
+);
+
+updateBalance();
+
+loadHistory();
+
+updateMoneyChart();
+
+loadLeaderboard();
+
+}
+
+/* SAVE HISTORY */
+
+function saveHistory(text){
+
+let history =
+JSON.parse(
+localStorage.getItem(
+currentUser+"_history"
+)
+) || [];
+
+history.unshift({
+text:text,
+time:new Date()
+.toLocaleString()
+});
+
+localStorage.setItem(
+currentUser+"_history",
+JSON.stringify(history)
+);
+
+}
+
+/* LOAD HISTORY */
+
+function loadHistory(){
+
+let history =
+JSON.parse(
+localStorage.getItem(
+currentUser+"_history"
+)
+) || [];
+
+let historyBox =
+document.getElementById(
+"historyBox"
+);
+
+historyBox.innerHTML = "";
+
+history.forEach(item=>{
+
+let div =
+document.createElement("div");
+
+div.classList.add(
+"history-item"
+);
+
+div.innerHTML = `
+
+<span>${item.text}</span>
+
+<span>
+${item.time}
+</span>
+
+`;
+
+historyBox.appendChild(div);
+
+});
+
+}
+
+/* LOGOUT */
+
+function logout(){
+
+localStorage.removeItem(
+"loggedUser"
+);
+
+location.reload();
+
+}
+
+/* MONEY CHART */
+
+function createMoneyChart(){
+
+let ctx =
+document.getElementById(
+"moneyChart"
+);
+
+moneyChart =
+new Chart(ctx,{
+
+type:"line",
+
+data:{
+
+labels:[
+"Start",
+"Current"
+],
+
+datasets:[{
+
+label:"Vault Balance",
+
+data:[
+0,
+parseInt(
+localStorage.getItem(
+currentUser+"_money"
+)
+) || 0
+],
+
+borderWidth:3,
+
+tension:0.4
+
+}]
+
+},
+
+options:{
+responsive:true
+}
+
+});
+
+}
+
+/* UPDATE CHART */
+
+function updateMoneyChart(){
+
+moneyChart.data.datasets[0]
+.data = [
+
+0,
+
+parseInt(
+localStorage.getItem(
+currentUser+"_money"
+)
+) || 0
+
+];
+
+moneyChart.update();
+
+}
+/* LIVE LTC CRYPTO CHART */
+
+function createCryptoChart(){
+
+let ctx =
+document.getElementById(
+"cryptoChart"
+);
+
+cryptoChart =
+new Chart(ctx,{
+
+type:"line",
+
+data:{
+
+labels:[
+"1m",
+"2m",
+"3m",
+"4m",
+"5m",
+"6m",
+"7m"
+],
+
+datasets:[{
+
+label:"Litecoin (LTC)",
+
+data:[
+82,
+85,
+84,
+88,
+91,
+89,
+94
+],
+
+borderWidth:3,
+
+tension:0.4
+
+}]
+
+},
+
+options:{
+responsive:true
+}
+
+});
+
+/* AUTO UPDATE */
+
+setInterval(()=>{
+
+let chartData =
+cryptoChart.data.datasets[0].data;
+
+/* REMOVE FIRST VALUE */
+
+chartData.shift();
+
+/* RANDOM NEXT PRICE */
+
+let lastPrice =
+chartData[
+chartData.length-1
+];
+
+let nextPrice =
+lastPrice +
+(Math.random()*8-4);
+
+if(nextPrice < 50){
+
+nextPrice = 50;
+
+}
+
+/* ADD NEW PRICE */
+
+chartData.push(
+nextPrice.toFixed(2)
+);
+
+/* UPDATE LABELS */
+
+let labels =
+cryptoChart.data.labels;
+
+labels.shift();
+
+let nextMinute =
+parseInt(
+labels[
+labels.length-1
+]
+) + 1;
+
+labels.push(
+nextMinute + "m"
+);
+
+cryptoChart.update();
+
+},3000);
+
+}
+
+/* LEADERBOARD */
+
+function loadLeaderboard(){
+
+let leaderboard =
+document.getElementById(
+"leaderboard"
+);
+
+leaderboard.innerHTML = "";
+
+/* GET USERS */
+
+let users = [];
+
+for(let i=0;
+i<localStorage.length;
+i++){
+
+let key =
+localStorage.key(i);
+
+if(key.endsWith("_money")){
+
+let username =
+key.replace("_money","");
+
+let money =
+parseInt(
+localStorage.getItem(key)
+);
+
+users.push({
+
+name:username,
+
+money:money
+
+});
+
+}
+
+}
+
+/* SORT */
+
+users.sort(
+(a,b)=>b.money-a.money
+);
+
+/* TOP 100 */
+
+users.slice(0,100)
+.forEach((user,index)=>{
+
+let div =
+document.createElement("div");
+
+div.classList.add(
+"leaderboard-item"
+);
+
+div.innerHTML = `
+
+<div>
+
+<div class="rank">
+#${index+1}
+</div>
+
+<div>
+${user.name}
+</div>
+
+</div>
+
+<div>
+₹${user.money}
+</div>
+
+`;
+
+leaderboard.appendChild(div);
+
+});
+
+}
+
+/* REVIEW SYSTEM */
+
+function addReview(){
+
+let name =
+document.getElementById(
+"reviewName"
+).value;
+
+let text =
+document.getElementById(
+"reviewText"
+).value;
+
+let stars =
+document.getElementById(
+"reviewStars"
+).value;
+
+if(
+name === "" ||
+text === "" ||
+stars === ""
+){
+
+alert("Fill all review fields");
+
+return;
+
+}
+
+let reviews =
+JSON.parse(
+localStorage.getItem(
+"vault_reviews"
+)
+) || [];
+
+reviews.unshift({
+
+name:name,
+
+text:text,
+
+stars:stars
+
+});
+
+localStorage.setItem(
+"vault_reviews",
+JSON.stringify(reviews)
+);
+
+loadReviews();
+
+/* CLEAR INPUTS */
+
+document.getElementById(
+"reviewName"
+).value = "";
+
+document.getElementById(
+"reviewText"
+).value = "";
+
+document.getElementById(
+"reviewStars"
+).value = "";
+
+}
+/* LOAD REVIEWS */
+
+function loadReviews(){
+
+let reviews =
+JSON.parse(
+localStorage.getItem(
+"vault_reviews"
+)
+) || [];
+
+let container =
+document.getElementById(
+"reviewsContainer"
+);
+
+container.innerHTML = "";
+
+reviews.forEach(review=>{
+
+let div =
+document.createElement("div");
+
+div.classList.add(
+"review"
+);
+
+let stars = "";
+
+for(let i=0;i<review.stars;i++){
+
+stars += "⭐";
+
+}
+
+div.innerHTML = `
+
+<div class="review-name">
+${review.name}
+</div>
+
+<div>
+${review.text}
+</div>
+
+<div class="review-stars">
+${stars}
+</div>
+
+`;
+
+container.appendChild(div);
+
+});
+
+}
+
+/* AUTO LOGIN */
+
+showVault();
+
+/* ENTER KEY SUPPORT */
+
+document.addEventListener(
+"keydown",
+function(e){
+
+if(e.key === "Enter"){
+
+if(
+document.getElementById(
+"loginPage"
+).style.display !== "none"
+){
+
+login();
+
+}
+
+}
+
+}
+);
+
+/* RANDOM GLOW EFFECT */
+
+setInterval(()=>{
+
+document.body.style.background =
+`
+radial-gradient(
+circle at ${
+Math.random()*100
+}% ${
+Math.random()*100
+}%,
+#0f172a,
+#020617
+)
+`;
+
+},4000);
+
+/* WELCOME EFFECT */
+
+setTimeout(()=>{
+
+console.log(
+"💸 ABHIGYAN MONEY VAULT LOADED"
+);
+
+},1000);
+
+/* ONLINE STATUS */
+
+window.addEventListener(
+"online",
+()=>{
+
+console.log(
+"Internet Connected 🌐"
+);
+
+}
+);
+
+window.addEventListener(
+"offline",
+()=>{
+
+console.log(
+"Internet Disconnected ❌"
+);
+
+}
+);
+
+/* SAVE LAST ACTIVE */
+
+setInterval(()=>{
+
+localStorage.setItem(
+currentUser+"_lastActive",
+
+new Date()
+.toLocaleString()
+
+);
+
+},5000);
+
+/* MOBILE TOUCH EFFECT */
+
+document.addEventListener(
+"touchstart",
+function(e){
+
+let glow =
+document.createElement("div");
+
+glow.style.position =
+"fixed";
+
+glow.style.width = "20px";
+
+glow.style.height = "20px";
+
+glow.style.borderRadius =
+"50%";
+
+glow.style.background =
+"#00ffd5";
+
+glow.style.left =
+e.touches[0].clientX
++ "px";
+
+glow.style.top =
+e.touches[0].clientY
++ "px";
+
+glow.style.opacity = "0.8";
+
+glow.style.pointerEvents =
+"none";
+
+glow.style.filter =
+"blur(8px)";
+
+glow.style.zIndex = "9999";
+
+document.body.appendChild(glow);
+
+setTimeout(()=>{
+
+glow.remove();
+
+},400);
+
+}
+);
+
+/* CLOCK */
+
+let clock =
+document.createElement("div");
+
+clock.style.position =
+"fixed";
+
+clock.style.top = "10px";
+
+clock.style.right = "15px";
+
+clock.style.background =
+"rgba(255,255,255,0.08)";
+
+clock.style.padding =
+"8px 14px";
+
+clock.style.borderRadius =
+"12px";
+
+clock.style.fontSize =
+"14px";
+
+clock.style.backdropFilter =
+"blur(10px)";
+
+document.body.appendChild(
+clock
+);
+
+setInterval(()=>{
+
+clock.innerHTML =
+"🕒 " +
+new Date()
+.toLocaleTimeString();
+
+},1000);
+
+</script>
+
+</body>
+</html>
